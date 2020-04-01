@@ -25,34 +25,34 @@
     - user: "{{ greenpithumb_frontend_user }}"
       group: "{{ greenpithumb_frontend_group }}"
 
-- name: add Adafruit apt repository
-  apt_repository:
-    repo: deb http://apt.adafruit.com/raspbian/ jessie main
-    state: present
-  when: is_pi
-  register: add_adafruit_repo
+# - name: add Adafruit apt repository
+#   apt_repository:
+#     repo: deb http://apt.adafruit.com/raspbian/ jessie main
+#     state: present
+#   when: is_pi
+#   register: add_adafruit_repo
 
-- name: add Adafruit apt key
-  apt_key:
-    url: https://apt.adafruit.com/apt.adafruit.com.gpg.key
-    state: present
-  when: is_pi
-  register: add_adafruit_key
+# - name: add Adafruit apt key
+#   apt_key:
+#     url: https://apt.adafruit.com/apt.adafruit.com.gpg.key
+#     state: present
+#   when: is_pi
+#   register: add_adafruit_key
 
-- name: update apt cache
-  apt:
-    update_cache: true
-  when: "add_adafruit_repo.changed or add_adafruit_key.changed"
-  tags:
-    # We need to run this now, so it can't be a handler
-    # [ANSIBLE0016] Tasks that run when changed should likely be handlers
-    - skip_ansible_lint
+# - name: update apt cache
+#   apt:
+#     update_cache: true
+#   when: "add_adafruit_repo.changed or add_adafruit_key.changed"
+#   tags:
+#     # We need to run this now, so it can't be a handler
+#     # [ANSIBLE0016] Tasks that run when changed should likely be handlers
+#     - skip_ansible_lint
 
-- name: install Adafruit node.js package
-  apt:
-    name: node
-    state: installed
-  when: is_pi
+# - name: install Adafruit node.js package
+#   apt:
+#     name: node
+#     state: installed
+#   when: is_pi
 
 - name: install necessary packages
   apt:
@@ -65,32 +65,35 @@
     - python-openssl
     - python-pip
 
-- name: configure Raspberry Pi camera
-  include: "camera.yml"
-  when: is_pi
+# - name: configure Raspberry Pi camera
+#   include: "camera.yml"
+#   when: is_pi
 
 - name: install libraries
   pip:
     name: "{{ item }}"
   with_items:
-    - adafruit-mcp3008
-    - RPi.GPIO
+    - pySerialTransfer
+    - miflora
+    - bluepy
+    - btlewrap
+    - tzlocal
 
-- name: download Adafruit DHT library
-  git:
-    repo: https://github.com/adafruit/Adafruit_Python_DHT
-    version: master
-    dest: "{{ __greenpithumb_adafruit_dht_tmp_path }}"
-  notify:
-    - install Adafruit DHT library
+# - name: download Adafruit DHT library
+#   git:
+#     repo: https://github.com/adafruit/Adafruit_Python_DHT
+#     version: master
+#     dest: "{{ __greenpithumb_adafruit_dht_tmp_path }}"
+#   notify:
+#     - install Adafruit DHT library
 
 # The Adafruit DHT library will refuse to install on non SBC machines, so if
 # the target machine is not ARM-based, assume this is an install on a test
 # machine and add the force test parameter.
-- name: set Adafruit DHT library test compatibility
-  set_fact:
-    greenpithumb_adafruit_dht_extra_args: "--force-test"
-  when: "'arm' not in ansible_machine"
+# - name: set Adafruit DHT library test compatibility
+#   set_fact:
+#     greenpithumb_adafruit_dht_extra_args: "--force-test"
+#   when: "'arm' not in ansible_machine"
 
 - name: download greenpithumb backend code
   git:
@@ -105,14 +108,14 @@
   pip:
     requirements: "{{ greenpithumb_backend_path }}/requirements.txt"
 
-- name: create wiring config
-  copy:
-    src: "{{ greenpithumb_backend_path }}/greenpithumb/wiring_config.ini.example"
-    dest: "{{ greenpithumb_backend_path }}/greenpithumb/wiring_config.ini"
-    owner: "{{ greenpithumb_backend_user }}"
-    group: "{{ greenpithumb_backend_group }}"
-    mode: 0444
-    remote_src: yes
+# - name: create wiring config
+#   copy:
+#     src: "{{ greenpithumb_backend_path }}/greenpithumb/wiring_config.ini.example"
+#     dest: "{{ greenpithumb_backend_path }}/greenpithumb/wiring_config.ini"
+#     owner: "{{ greenpithumb_backend_user }}"
+#     group: "{{ greenpithumb_backend_group }}"
+#     mode: 0444
+#     remote_src: yes
 
 - name: create greenpithumb data folders
   file:
@@ -134,19 +137,19 @@
     mode: 0755
   when: greenpithumb_diagnostics_enabled
 
-- name: install diagnostic scripts
-  copy:
-    src: "{{ item }}"
-    dest: "{{ greenpithumb_diagnostic_path }}/{{ item }}"
-    owner: "{{ greenpithumb_backend_user }}"
-    group: "{{ greenpithumb_backend_group }}"
-    mode: 0777
-  with_items:
-    - test_dht11.py
-    - test_light_sensor.py
-    - test_pump.py
-    - test_soil_moisture_sensor.py
-  when: greenpithumb_diagnostics_enabled
+# - name: install diagnostic scripts
+#   copy:
+#     src: "{{ item }}"
+#     dest: "{{ greenpithumb_diagnostic_path }}/{{ item }}"
+#     owner: "{{ greenpithumb_backend_user }}"
+#     group: "{{ greenpithumb_backend_group }}"
+#     mode: 0777
+#   with_items:
+#     - test_dht11.py
+#     - test_light_sensor.py
+#     - test_pump.py
+#     - test_soil_moisture_sensor.py
+#   when: greenpithumb_diagnostics_enabled
 
 - name: download greenpithumb frontend code
   git:
@@ -173,7 +176,7 @@
     - .config
     - .local
     - .npm
-    
+
 - name: create greenpithumb frontend static directory
   file:
     path: "{{ greenpithumb_frontend_static_root }}"
