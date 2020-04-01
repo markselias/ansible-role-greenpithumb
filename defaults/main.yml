@@ -14,7 +14,7 @@ greenpithumb_backend_user: greenpithumb
 greenpithumb_backend_group: greenpithumb
 greenpithumb_backend_path: "/opt/greenpithumb"
 greenpithumb_backend_git_repo: "https://github.com/markselias/GreenPiThumb"
-greenpithumb_backend_git_version: "master"
+greenpithumb_backend_git_version: "miflora"
 # Settings for GreenPiThumb backend command-line flags.
 greenpithumb_backend_poll_interval: null
 greenpithumb_backend_photo_interval: null
