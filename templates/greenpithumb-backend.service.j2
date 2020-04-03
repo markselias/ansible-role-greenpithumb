@@ -2,7 +2,7 @@
 Description=GreenPiThumb Backend Service
 
 [Service]
-ExecStart=/usr/bin/python \
+ExecStart=/usr/bin/python3 \
   {{ greenpithumb_backend_path }}/greenpithumb/greenpithumb.py  \
 {% if greenpithumb_backend_poll_interval %}
   --poll_interval={{ greenpithumb_backend_poll_interval }} \
