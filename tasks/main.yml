@@ -73,10 +73,10 @@
   pip:
     name: "{{ item }}"
   with_items:
-    - pySerialTransfer
-    - miflora
-    - bluepy
-    - btlewrap
+    # - pySerialTransfer
+    # - miflora
+    # - bluepy
+    # - btlewrap
     - tzlocal
 
 # - name: download Adafruit DHT library
