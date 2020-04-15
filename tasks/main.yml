@@ -51,13 +51,13 @@
 # - name: install Adafruit node.js package
 #   apt:
 #     name: node
-#     state: installed
+#     state: present
 #   when: is_pi
 
 - name: install necessary packages
   apt:
     name: "{{ item }}"
-    state: installed
+    state: present
   with_items:
     - build-essential
     - git
